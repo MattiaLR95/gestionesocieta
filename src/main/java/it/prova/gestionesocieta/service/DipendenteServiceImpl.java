@@ -1,5 +1,6 @@
 package it.prova.gestionesocieta.service;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -48,6 +49,11 @@ public class DipendenteServiceImpl implements DipendenteService {
 	@Override
 	public void rimuovi(Dipendente dipendenteInstance) {
 		dipendenteRepository.delete(dipendenteInstance);
+	}
+
+	@Override
+	public Dipendente dipendentePiuAnziano(Date date) {
+		return dipendenteRepository.findTopBySocieta_DataFondazioneBeforeOrderByDataAssunzioneAsc(date);
 	}
 
 }

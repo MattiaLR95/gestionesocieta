@@ -22,6 +22,7 @@ public class BatteriaDiTestService {
 	private DipendenteService dipendenteService;
 
 	public void testInserisciSocieta() throws Exception {
+		System.out.println("INIZIO TEST INSERISCI SOCIETA");
 
 		Long nowInMillisecondi = new Date().getTime();
 		Date nuovaData = new SimpleDateFormat("dd-MM-yyyy").parse("06-01-1995");
@@ -33,6 +34,7 @@ public class BatteriaDiTestService {
 	}
 
 	public void testFindByExample() throws Exception {
+		System.out.println("INIZIO TEST FIND BY EXAMPLE");
 
 		Date nuovaData = new SimpleDateFormat("dd-MM-yyyy").parse("06-01-1995");
 		Societa nuovaSocieta = new Societa("GoPro", "Via di casa mia", nuovaData);
@@ -45,6 +47,8 @@ public class BatteriaDiTestService {
 	}
 
 	public void testRimozioneSocieta() throws Exception {
+		
+		System.out.println("INIZIO TEST RIMOZIONE SOCIETA");
 
 		Date nuovaData = new SimpleDateFormat("dd-MM-yyyy").parse("06-01-1995");
 		Societa nuovaSocieta = new Societa("Marca", "Via della societa", nuovaData);
@@ -70,6 +74,78 @@ public class BatteriaDiTestService {
 		} catch (RimuoviSocietaConDipendentiException e) {
 			e.printStackTrace();
 		}
+		System.out.println("TEST COMPLETATO");
+	}
+	
+	public void testInserimentoDipendente () throws Exception{
+		System.out.println("INIZIO TEST INSERIMENTO DIPENDENTE");
+		
+		Date nuovaData = new SimpleDateFormat("dd-MM-yyyy").parse("06-01-1995");
+		Societa nuovaSocieta = new Societa("Marca", "Via della societa", nuovaData);
+		societaService.inserisciNuovo(nuovaSocieta);
+		
+		Dipendente nuovoDipendente = new Dipendente("Mattia","La Rocca",nuovaData,15000,nuovaSocieta);
+		dipendenteService.inserisciNuovo(nuovoDipendente);
+		nuovaSocieta.getDipendenti().add(nuovoDipendente);
+		
+		if(nuovaSocieta.getDipendenti().size()!=1)
+			throw new RuntimeException("Attenzione! Test Fallito");
+		
+		System.out.println("Test Completato");
+	}
+	
+	public void testAggiornamentoDipendenti() throws Exception{
+		System.out.println("INIZIO TEST AGGIORNAMENTO DIPENDENTE");
+		
+		Date nuovaData = new SimpleDateFormat("dd-MM-yyyy").parse("06-01-1995");
+		Societa nuovaSocieta = new Societa("Marca", "Via della societa", nuovaData);
+		societaService.inserisciNuovo(nuovaSocieta);
+		
+		Dipendente nuovoDipendente = new Dipendente("Mattia","La Rocca",nuovaData,15000,nuovaSocieta);
+		dipendenteService.inserisciNuovo(nuovoDipendente);
+		nuovaSocieta.getDipendenti().add(nuovoDipendente);
+		
+		String nomeDipendenteVecchio = nuovoDipendente.getNome();
+		String nomeNuovo = "Carlo";
+		nuovoDipendente.setNome(nomeNuovo);
+		dipendenteService.aggiorna(nuovoDipendente);
+		if(nomeDipendenteVecchio.equals(nuovoDipendente.getNome()))
+			throw new RuntimeException("Attenzione! Test Fallito!");
+		System.out.println("TEST COMPLETATO");
+	}
+	
+	public void testSocietaConDipendentiConRalMaggioreDi() throws Exception{
+		System.out.println("INIZIO TEST SOCIETA CON DIPENDENTI CON RAL MAGGIORE DI");
+		
+		Date nuovaData = new SimpleDateFormat("dd-MM-yyyy").parse("06-01-1995");
+		Societa nuovaSocieta = new Societa("Marca", "Via della societa", nuovaData);
+		societaService.inserisciNuovo(nuovaSocieta);
+		
+		Dipendente nuovoDipendente = new Dipendente("Mattia","La Rocca",nuovaData,40000,nuovaSocieta);
+		dipendenteService.inserisciNuovo(nuovoDipendente);
+		nuovaSocieta.getDipendenti().add(nuovoDipendente);
+		if(societaService.trovaSocietaConDipendenteConRalCheParte(30000).size()!=1)
+			throw new RuntimeException("Attenzione! TEST FALLITO");
+		System.out.println("TEST COMPLETATO");
+	}
+	
+	public void testDipendentePiuAnziano() throws Exception{
+		System.out.println("INIZIO TEST DIPENDENTE PIU ANZIANO");
+		
+		Date nuovaData = new SimpleDateFormat("dd-MM-yyyy").parse("06-01-1989");
+		Societa nuovaSocieta = new Societa("Marca", "Via della societa", nuovaData);
+		societaService.inserisciNuovo(nuovaSocieta);
+		
+		Dipendente nuovoDipendente = new Dipendente("Mattia","La Rocca",nuovaData,40000,nuovaSocieta);
+		Date nuovaData1 = new SimpleDateFormat("dd-MM-yyyy").parse("06-01-1998");
+		Dipendente nuovoDipendente1 = new Dipendente("Mattia","La Rocca",nuovaData1,40000,nuovaSocieta);
+		dipendenteService.inserisciNuovo(nuovoDipendente);
+		dipendenteService.inserisciNuovo(nuovoDipendente1);
+		nuovaSocieta.getDipendenti().add(nuovoDipendente);
+		nuovaSocieta.getDipendenti().add(nuovoDipendente1);
+		
+		if(nuovoDipendente.getId()!=dipendenteService.dipendentePiuAnziano(new SimpleDateFormat("dd-MM-yyyy").parse("01-01-1990")).getId())
+			throw new RuntimeException("ATTENZIONE! TEST FALLITO");
 		System.out.println("TEST COMPLETATO");
 	}
 }

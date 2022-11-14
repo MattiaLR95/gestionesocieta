@@ -4,8 +4,8 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
-import org.springframework.aop.ThrowsAdvice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,7 +51,10 @@ public class SocietaServiceImpl implements SocietaService {
 	@Transactional
 	@Override
 	public void rimuovi(Societa societaInstance) {
-		if(societaInstance.getDipendenti()!= null)
+		TypedQuery<Societa> query = entityManager
+				.createQuery("select s from Societa s join fetch s.dipendenti d where s.id= :id", Societa.class)
+				.setParameter("id", societaInstance.getId());
+		if(!query.getResultList().isEmpty())
 			throw new RimuoviSocietaConDipendentiException("Attenzione! Dipendenti nella societa");
 		societaRepository.delete(societaInstance);
 	}
@@ -69,6 +72,11 @@ public class SocietaServiceImpl implements SocietaService {
 			query += " and s.dataFondazione >= '" + example.getDataFondazione().toInstant() + "'";
 
 		return entityManager.createQuery(query, Societa.class).getResultList();
+	}
+
+	@Override
+	public List<Societa> trovaSocietaConDipendenteConRalCheParte(int valore) {
+		return societaRepository.findAllDistinctByDipendenti_RedditoAnnuoLordoGreaterThan(valore);
 	}
 
 }

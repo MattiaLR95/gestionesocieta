@@ -2,8 +2,10 @@ package it.prova.gestionesocieta.exception;
 
 public class RimuoviSocietaConDipendentiException extends RuntimeException{
 
-	public RimuoviSocietaConDipendentiException(String Messaggio) {
-		super();
+	private static final long serialVersionUID = 1L;
+
+	public RimuoviSocietaConDipendentiException(String messaggio) {
+		super(messaggio);
 	}
 	
 }
